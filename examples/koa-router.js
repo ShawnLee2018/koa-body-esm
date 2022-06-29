@@ -1,12 +1,14 @@
 'use strict';
 
-const log       = console.log;
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index');
-const port      = process.env.PORT || 4290;
-const host      = process.env.HOST || 'http://localhost';
+import Koa from 'koa';
+import KoaRouter from 'koa-router';
+import koaBody from '../index.js';
+import path from 'path';
+const log = console.log;
+const app = new Koa();
+const router = KoaRouter();
+const port = process.env.PORT || 4290;
+const host = process.env.HOST || 'http://localhost';
 
 /*!
  * Accepts only urlencoded and json bodies.
@@ -37,7 +39,6 @@ router.get('/', (ctx) => {
   </body>
 </html>`;
 });
-
 /*!
  * Accepts `multipart`, `json` and `urlencoded` bodies.
  */
@@ -45,7 +46,7 @@ router.post('/post/upload',
   koaBody({
     multipart: true,
     formidable: {
-      uploadDir: __dirname + '/uploads'
+      uploadDir: path.resolve('examples/uploads')
     }
   }),
   (ctx) => {
@@ -69,9 +70,9 @@ router.post('/post/upload',
     ctx.body = JSON.stringify({
       requestFields: fields || null,
       requestFiles: files || null
-    }, null, 2)
+    }, null, 2);
   }
-)
+);
 
 app.use(router.routes());
 app.listen(port);
@@ -80,6 +81,6 @@ log('Visit %s:%s/ in browser.', host, port);
 log();
 log('Test with executing this commands:');
 log('curl -i %s:%s/post/users -d "user=admin"', host, port);
-log('curl -i %s:%s/post/upload -F "source=@%s/avatar.png"', host, port, __dirname);
+log('curl -i %s:%s/post/upload -F "source=@%s/avatar.png"', host, port, path.resolve('examples'));
 log();
 log('Press CTRL+C to stop...');

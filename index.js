@@ -1,5 +1,5 @@
 /**
- * koa-body - index.js
+ * koa-body-esm - index.js
  * Copyright(c) 2014
  * MIT Licensed
  *
@@ -14,15 +14,16 @@
  * Module dependencies.
  */
 
-const buddy = require('co-body');
-const forms = require('formidable');
-const symbolUnparsed = require('./unparsed.js');
+
+import buddy from 'co-body';
+import { IncomingForm } from 'formidable';
+import symbolUnparsed from './unparsed.js';
 
 /**
  * Expose `requestbody()`.
  */
 
-module.exports = requestbody;
+export default requestbody;
 
 const jsonTypes = [
   'application/json',
@@ -52,25 +53,25 @@ function requestbody(opts) {
   opts.formLimit = 'formLimit' in opts ? opts.formLimit : '56kb';
   opts.queryString = 'queryString' in opts ? opts.queryString : null;
   opts.formidable = 'formidable' in opts ? opts.formidable : {};
-  opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false
+  opts.includeUnparsed = 'includeUnparsed' in opts ? opts.includeUnparsed : false;
   opts.textLimit = 'textLimit' in opts ? opts.textLimit : '56kb';
 
   // @todo: next major version, opts.strict support should be removed
   if (opts.strict && opts.parsedMethods) {
-    throw new Error('Cannot use strict and parsedMethods options at the same time.')
+    throw new Error('Cannot use strict and parsedMethods options at the same time.');
   }
 
   if ('strict' in opts) {
-    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.')
+    console.warn('DEPRECATED: opts.strict has been deprecated in favor of opts.parsedMethods.');
     if (opts.strict) {
-      opts.parsedMethods = ['POST', 'PUT', 'PATCH']
+      opts.parsedMethods = ['POST', 'PUT', 'PATCH'];
     } else {
-      opts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE']
+      opts.parsedMethods = ['POST', 'PUT', 'PATCH', 'GET', 'HEAD', 'DELETE'];
     }
   }
 
-  opts.parsedMethods = 'parsedMethods' in opts ? opts.parsedMethods : ['POST', 'PUT', 'PATCH']
-  opts.parsedMethods = opts.parsedMethods.map(function (method) { return method.toUpperCase() })
+  opts.parsedMethods = 'parsedMethods' in opts ? opts.parsedMethods : ['POST', 'PUT', 'PATCH'];
+  opts.parsedMethods = opts.parsedMethods.map(function (method) { return method.toUpperCase(); });
 
   return function (ctx, next) {
     var bodyPromise;
@@ -110,7 +111,7 @@ function requestbody(opts) {
     }
 
     bodyPromise = bodyPromise || Promise.resolve({});
-    return bodyPromise.catch(function(parsingError) {
+    return bodyPromise.catch(function (parsingError) {
       if (typeof opts.onError === 'function') {
         opts.onError(parsingError, ctx);
       } else {
@@ -118,35 +119,35 @@ function requestbody(opts) {
       }
       return next();
     })
-    .then(function(body) {
-      if (opts.patchNode) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.req.body = body.fields;
-          ctx.req.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.req.body = body.parsed || {};
-          if (! ctx.is('text/*')) {
-            ctx.req.body[symbolUnparsed] = body.raw;
+      .then(function (body) {
+        if (opts.patchNode) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.req.body = body.fields;
+            ctx.req.files = body.files;
+          } else if (opts.includeUnparsed) {
+            ctx.req.body = body.parsed || {};
+            if (!ctx.is('text/*')) {
+              ctx.req.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.req.body = body;
           }
-        } else {
-          ctx.req.body = body;
         }
-      }
-      if (opts.patchKoa) {
-        if (isMultiPart(ctx, opts)) {
-          ctx.request.body = body.fields;
-          ctx.request.files = body.files;
-        } else if (opts.includeUnparsed) {
-          ctx.request.body = body.parsed || {};
-          if (! ctx.is('text/*')) {
-            ctx.request.body[symbolUnparsed] = body.raw;
+        if (opts.patchKoa) {
+          if (isMultiPart(ctx, opts)) {
+            ctx.request.body = body.fields;
+            ctx.request.files = body.files;
+          } else if (opts.includeUnparsed) {
+            ctx.request.body = body.parsed || {};
+            if (!ctx.is('text/*')) {
+              ctx.request.body[symbolUnparsed] = body.raw;
+            }
+          } else {
+            ctx.request.body = body;
           }
-        } else {
-          ctx.request.body = body;
         }
-      }
-      return next();
-    })
+        return next();
+      });
   };
 }
 
@@ -174,7 +175,7 @@ function formy(ctx, opts) {
   return new Promise(function (resolve, reject) {
     var fields = {};
     var files = {};
-    var form = new forms.IncomingForm(opts);
+    var form = new IncomingForm(opts);
     form.on('end', function () {
       return resolve({
         fields: fields,

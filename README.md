@@ -1,4 +1,5 @@
-koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](https://travis-ci.org/dlau/koa-body) [![Dependencies Status](https://david-dm.org/dlau/koa-body/status.svg)](https://david-dm.org/dlau/koa-body) [![KoaJs Slack](https://img.shields.io/badge/Koa.Js-Slack%20Channel-Slack.svg?longCache=true)](https://communityinviter.com/apps/koa-js/koajs)
+koa-body with esm
+
 ================
 
 > A full-featured [`koa`](https://github.com/koajs/koa) body parser middleware. Supports `multipart`, `urlencoded`, and `json` request bodies. Provides the same functionality as Express's bodyParser - [`multer`](https://github.com/expressjs/multer).
@@ -7,7 +8,7 @@ koa-body [![Build Status](https://travis-ci.org/dlau/koa-body.svg?branch=koa2)](
 >Install with [npm](https://github.com/npm/npm)
 
 ```
-npm install koa-body
+npm install koa-body-esm
 ```
 
 ## Features
@@ -26,13 +27,13 @@ npm install koa-body
 ## Hello World - Quickstart
 
 ```sh
-npm install koa koa-body # Note that Koa requires Node.js 7.6.0+ for async/await support
+npm install koa koa-body-esm # Note that Koa requires Node.js 7.6.0+ for async/await support
 ```
 
 index.js:
 ```js
-const Koa = require('koa');
-const koaBody = require('koa-body');
+import Koa from 'koa';
+import koaBody from 'koa-body-esm';
 
 const app = new Koa();
 
@@ -66,10 +67,12 @@ Request Body: {"name":"test"}%
 It's generally better to only parse the body as needed, if using a router that supports middleware composition, we can inject it only for certain routes.
 
 ```js
-const Koa = require('koa');
+import Koa from 'koa';
+import koaBody from 'koa-body-esm';
+import Router from 'koa-router';
+
 const app = new Koa();
-const router = require('koa-router')();
-const koaBody = require('koa-body');
+const router = Router();
 
 router.post('/users', koaBody(),
   (ctx) => {
@@ -90,9 +93,9 @@ For unsupported text body type, for example, `text/xml`, you can use the unparse
 
 ```js
 // xml-parse.js:
-const Koa = require('koa');
-const koaBody = require('koa-body');
-const convert = require('xml-js');
+import Koa from 'koa';
+import koaBody from 'koa-body-esm';
+import convert from 'xml-js';
 
 const app = new Koa();
 
@@ -122,7 +125,7 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 ```
 
 ## Options
-> Options available for `koa-body`. Four custom options, and others are from `raw-body` and `formidable`.
+> Options available for `koa-body-esm`. Four custom options, and others are from `raw-body` and `formidable`.
 
 - `patchNode` **{Boolean}** Patch request body to Node's `ctx.req`, default `false`
 - `patchKoa` **{Boolean}** Patch request body to Koa's `ctx.request`, default `true`
@@ -144,13 +147,13 @@ Request Body: {"declaration":{"attributes":{"version":"1.0"}},"elements":[{"type
 ## A note about `parsedMethods`
 > see [http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3](http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-19#section-6.3)
 - `GET`, `HEAD`, and `DELETE` requests have no defined semantics for the request body, but this doesn't mean they may not be valid in certain use cases.
-- koa-body is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
+- koa-body-esm is strict by default, parsing only `POST`, `PUT`, and `PATCH` requests
 
 ## File Support
 Uploaded files are accessible via `ctx.request.files`.
 
 ## A note about unparsed request bodies
-Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body's options. When enabled, import the symbol for accessing the request body from `unparsed = require('koa-body/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
+Some applications require crytopgraphic verification of request bodies, for example webhooks from slack or stripe. The unparsed body can be accessed if `includeUnparsed` is `true` in koa-body-esm's options. When enabled, import the symbol for accessing the request body from `unparsed = require('npm-esm/unparsed.js')`, or define your own accessor using `unparsed = Symbol.for('unparsedBody')`. Then the unparsed body is available using `ctx.request.body[unparsed]`.
 
 ## Some options for formidable
 > See [node-formidable](https://github.com/felixge/node-formidable) for a full list of options

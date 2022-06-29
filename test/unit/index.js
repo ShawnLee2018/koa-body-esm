@@ -9,20 +9,20 @@
 
 'use strict';
 
-const assert = require('assert');
-const fs = require('fs');
-const http = require('http');
-const koaBody = require('../../index.js');
-const path = require('path');
-const request = require('supertest');
-const should = require('should');
-const Koa = require('koa');
-const Router = require('koa-router');
-const sinon = require('sinon');
+import assert from 'assert';
+import fs from 'fs';
+import http from 'http';
+import koaBody from '../../index.js';
+import path from 'path';
+import request from 'supertest';
+import should from 'should';
+import Koa from 'koa';
+import Router from 'koa-router';
+import sinon from 'sinon';
 
-const unparsed = require('../../unparsed.js');
+import unparsed from '../../unparsed.js';
 
-describe('koa-body', () => {
+describe('koa-body-esm', () => {
   let database;
   let router;
   let app;
@@ -43,7 +43,7 @@ describe('koa-body', () => {
     };
     router = Router()
       .get('/users', (ctx, next) => {
-        if(ctx.request.body && ctx.request.body.name) {
+        if (ctx.request.body && ctx.request.body.name) {
           ctx.body = database.users.find(element => element.name === ctx.request.body.name);
           ctx.status = 200;
           return next();
@@ -59,7 +59,7 @@ describe('koa-body', () => {
       .post('/users', (ctx, next) => {
         const user = ctx.request.body;
 
-        if(!user) {
+        if (!user) {
           ctx.status = 400;
           return next();
         }
@@ -96,14 +96,14 @@ describe('koa-body', () => {
   /**
    * DEFAULTS - multipart: false
    */
-  it('should work with defaults - multipart: false, only `urlencoded` and `json` bodies',  (done) => {
+  it('should work with defaults - multipart: false, only `urlencoded` and `json` bodies', (done) => {
     app.use(koaBody());
     app.use(router.routes());
 
     request(http.createServer(app.callback()))
       .get('/users')
       .expect(200, database)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
         done();
       });
@@ -113,7 +113,7 @@ describe('koa-body', () => {
   /**
    * MULTIPART - FIELDS
    */
-  it('should receive `multipart` requests - fields on .body object',  (done) => {
+  it('should receive `multipart` requests - fields on .body object', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -122,7 +122,7 @@ describe('koa-body', () => {
       .field('name', 'daryl')
       .field('followers', 30)
       .expect(201)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
 
         const mostRecentUser = database.users[database.users.length - 1];
@@ -141,7 +141,7 @@ describe('koa-body', () => {
   /**
    * MULTIPART - FILES
    */
-  it('should receive multiple fields and files via `multipart` on .body.files object',  (done) => {
+  it('should receive multiple fields and files via `multipart` on .body.files object', (done) => {
     app.use(koaBody({
       multipart: true,
       formidable: {
@@ -162,7 +162,7 @@ describe('koa-body', () => {
       .attach('thirdField', 'README.md')
       .attach('thirdField', 'package.json')
       .expect(201)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
         res.body.user.names.should.be.an.Array().and.have.lengthOf(2);
         res.body.user.names[0].should.equal('John');
@@ -206,13 +206,13 @@ describe('koa-body', () => {
       });
   });
 
-  it('can transform file names in multipart requests',  (done) => {
+  it('can transform file names in multipart requests', (done) => {
     app.use(koaBody({
       multipart: true,
       formidable: {
         uploadDir: '/tmp',
-        onFileBegin:  (name, file) => {
-          file.newFilename = 'backage.json'
+        onFileBegin: (name, file) => {
+          file.newFilename = 'backage.json';
           const folder = path.dirname(file.filepath);
           file.filepath = path.join(folder, file.newFilename);
         }
@@ -225,7 +225,7 @@ describe('koa-body', () => {
       .type('multipart/form-data')
       .attach('firstField', 'package.json')
       .expect(201)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
 
         res.body._files.firstField.should.be.an.Object();
@@ -241,7 +241,7 @@ describe('koa-body', () => {
   /**
    * URLENCODED request body
    */
-  it('should recieve `urlencoded` request bodies',  (done) => {
+  it('should recieve `urlencoded` request bodies', (done) => {
     app.use(koaBody({ multipart: true }));
     app.use(router.routes());
 
@@ -253,7 +253,7 @@ describe('koa-body', () => {
         followers: '41'
       })
       .expect(201)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
 
         const mostRecentUser = database.users[database.users.length - 1];
@@ -308,7 +308,7 @@ describe('koa-body', () => {
         });
     });
 
-    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option',  (done) => {
+    it('should recieve `urlencoded` request bodies with the `includeUnparsed` option', (done) => {
 
       const userRouterLayer = router.stack.filter(layer => layer.path === "/users" && layer.methods.includes('POST'));
       requestSpy = sinon.spy(userRouterLayer[0].stack, '0');
@@ -321,7 +321,7 @@ describe('koa-body', () => {
           followers: '97'
         })
         .expect(201)
-        .end( (err, res) => {
+        .end((err, res) => {
           if (err) return done(err);
 
           const mostRecentUser = database.users[database.users.length - 1];
@@ -411,7 +411,7 @@ describe('koa-body', () => {
       .type('text')
       .send('plain text')
       .expect(200)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
 
         res.type.should.equal('text/plain');
@@ -434,7 +434,7 @@ describe('koa-body', () => {
       .type('text/xml')
       .send(body)
       .expect(200)
-      .end( (err, res) => {
+      .end((err, res) => {
         if (err) return done(err);
 
         assert(requestSpy.calledOnce, 'Spy for /echo_body not called');
@@ -447,13 +447,13 @@ describe('koa-body', () => {
       });
   });
 
-  describe('strict mode',  () => {
-    beforeEach( () => {
+  describe('strict mode', () => {
+    beforeEach(() => {
       //push an additional, to test the multi query
       database.users.push({ name: 'charlike' });
     });
 
-    it('can enable strict mode',  (done) => {
+    it('can enable strict mode', (done) => {
       app.use(koaBody({ strict: true }));
       app.use(router.routes());
 
@@ -462,14 +462,14 @@ describe('koa-body', () => {
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
         .expect(204)
-        .end( (err, res) => {
+        .end((err, res) => {
           if (err) return done(err);
           assert(database.users.find(element => element.name === 'charlike') !== undefined);
           done();
         });
     });
 
-    it('can disable strict mode',  (done) => {
+    it('can disable strict mode', (done) => {
       app.use(koaBody({ strict: false }));
       app.use(router.routes());
 
@@ -478,7 +478,7 @@ describe('koa-body', () => {
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
         .expect(204)
-        .end( (err, res) => {
+        .end((err, res) => {
           if (err) return done(err);
           assert(database.users.find(element => element.name === 'charlike') === undefined);
           done();
@@ -486,13 +486,13 @@ describe('koa-body', () => {
     });
   });
 
-  describe('parsedMethods options',  () => {
-    beforeEach( () => {
+  describe('parsedMethods options', () => {
+    beforeEach(() => {
       //push an additional, to test the multi query
       database.users.push({ name: 'charlike' });
     });
 
-    it('methods declared are parsed',  (done) => {
+    it('methods declared are parsed', (done) => {
       app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'] }));
       app.use(router.routes());
 
@@ -501,14 +501,14 @@ describe('koa-body', () => {
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
         .expect(204)
-        .end( (err, res) => {
+        .end((err, res) => {
           if (err) return done(err);
           assert(database.users.find(element => element.name === 'charlike') === undefined);
           done();
         });
     });
 
-    it('methods do not get parsed if not declared',  (done) => {
+    it('methods do not get parsed if not declared', (done) => {
       app.use(koaBody({ parsedMethods: ['POST', 'PUT', 'PATCH'] }));
       app.use(router.routes());
 
@@ -517,7 +517,7 @@ describe('koa-body', () => {
         .type('application/x-www-form-urlencoded')
         .send({ multi: true })
         .expect(204)
-        .end( (err, res) => {
+        .end((err, res) => {
           if (err) return done(err);
           assert(database.users.find(element => element.name === 'charlike') !== undefined);
           done();
@@ -544,9 +544,9 @@ describe('koa-body', () => {
   /**
    * JSON request body
    */
-  describe('POST json request body',  () => {
+  describe('POST json request body', () => {
 
-    it('should set the follower count',  (done) => {
+    it('should set the follower count', (done) => {
       app.use(koaBody({ strict: false }));
       app.use(router.routes());
 
@@ -580,17 +580,17 @@ describe('koa-body', () => {
         .type('application/json')
         .send({ name: 'foo' })
         .expect(200)
-        .end( (err, res) => {
+        .end((err, res) => {
           response = res;
           done(err);
-        })
+        });
     });
 
-    it('should parse the response body',  () => {
+    it('should parse the response body', () => {
       response.body.should.not.equal(null);
     });
 
-    it('should return the user details',  () => {
+    it('should return the user details', () => {
       response.body.name.should.equal('foo');
       response.body.followers.should.equal(111);
     });
@@ -651,7 +651,7 @@ describe('koa-body', () => {
   /**
    * FORM (urlencoded) LIMIT
    */
-  it('should request 413 '+ERR_413_STATUSTEXT+', because of `formLimit`',  (done) => {
+  it('should request 413 ' + ERR_413_STATUSTEXT + ', because of `formLimit`', (done) => {
     app.use(koaBody({ formLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 
@@ -667,7 +667,7 @@ describe('koa-body', () => {
   /**
    * JSON LIMIT
    */
-  it('should request 413 '+ERR_413_STATUSTEXT+', because of `jsonLimit`',  (done) => {
+  it('should request 413 ' + ERR_413_STATUSTEXT + ', because of `jsonLimit`', (done) => {
     app.use(koaBody({ jsonLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 
@@ -680,7 +680,7 @@ describe('koa-body', () => {
   });
 
 
-  it('should tolerate no content type',  (done) => {
+  it('should tolerate no content type', (done) => {
     app.use(koaBody());
     app.use(router.routes());
 
@@ -695,7 +695,7 @@ describe('koa-body', () => {
   /**
    * TEXT LIMIT
    */
-  it('should request 413 '+ERR_413_STATUSTEXT+', because of `textLimit`',  (done) =>  {
+  it('should request 413 ' + ERR_413_STATUSTEXT + ', because of `textLimit`', (done) => {
     app.use(koaBody({ textLimit: 10 /*bytes*/ }));
     app.use(router.routes());
 

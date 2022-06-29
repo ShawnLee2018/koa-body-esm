@@ -1,22 +1,19 @@
 {
-  "name": "koa-body",
-  "version": "5.0.0",
+  "name": "koa-body-esm",
+  "version": "5.0.3",
   "description": "A Koa body parser middleware. Supports multipart, urlencoded and JSON request bodies.",
   "main": "index.js",
   "types": "./index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "mocha test/unit/",
     "examples-multer": "node examples/multer.js",
     "examples-koa-router": "node examples/koa-router.js"
   },
   "author": {
-    "name": "Daryl Lau",
-    "email": "dlau00@gmail.com",
-    "url": "https://github.com/dlau"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dlau/koa-body.git"
+    "name": "Shawn Lee",
+    "email": "shawnlee2018@126.com",
+    "url": "https://github.com/shawnlee2018"
   },
   "keywords": [
     "koa",
@@ -36,30 +33,17 @@
     "unparsed.js"
   ],
   "dependencies": {
-    "@types/formidable": "^2.0.4",
-    "co-body": "^5.1.1",
-    "formidable": "^2.0.1"
+    "co-body": "^6.1.0",
+    "formidable": "^3.2.4"
   },
   "devDependencies": {
-    "@types/koa": "^2.0.39",
-    "koa": "^2.0.0",
-    "koa-router": "^7.0.1",
-    "mocha": "5.2.0",
-    "should": "13.2.1",
-    "sinon": "^7.2.2",
-    "supertest": "3.1.0"
+    "@types/koa": "^2.13.4",
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "mocha": "10.0.0",
+    "should": "13.2.3",
+    "sinon": "^14.0.0",
+    "supertest": "6.2.3"
   },
-  "contributors": [
-    {
-      "name": "Daryl Lau",
-      "email": "dlau00@gmail.com",
-      "url": "https://github.com/dlau"
-    },
-    {
-      "name": "Charlike Mike Reagent",
-      "email": "mameto_100@mail.bg",
-      "url": "https://github.com/tunnckoCore"
-    }
-  ],
   "license": "MIT"
 }

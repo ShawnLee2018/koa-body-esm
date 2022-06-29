@@ -1,18 +1,20 @@
 'use strict';
 
-const log     = console.log;
-const Koa     = require('koa');
-const app     = new Koa();
-const koaBody = require('../index');
-const port    = process.env.PORT || 4290;
-const host    = 'http://localhost';
+import Koa from 'koa';
+import path from 'path';
+import koaBody from '../index.js';
+
+const log = console.log;
+const app = new Koa();
+const port = process.env.PORT || 4290;
+const host = 'http://localhost';
 
 app
   .use(koaBody({
     multipart: true,
     formLimit: 15,
     formidable: {
-      uploadDir: __dirname + '/uploads'
+      uploadDir: path.resolve('examples/uploads')
     }
   }))
   .use((ctx) => {
@@ -30,6 +32,6 @@ log();
 log('Test with executing this commands:');
 log('curl -i %s:%s/whatever -d "name=charlike"', host, port);
 log('curl -i %s:%s/whatever -d "name=some-long-name-for-error"', host, port);
-log('curl -i %s:%s/whatever -F "source=@%s/avatar.png"', host, port, __dirname);
+log('curl -i %s:%s/whatever -F "source=@%s/avatar.png"', host, port, path.resolve('./examples'));
 log();
 log('Press CTRL+C to stop...');

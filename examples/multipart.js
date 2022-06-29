@@ -1,9 +1,8 @@
 'use strict';
-
-const Koa       = require('koa');
-const app       = new Koa();
-const router    = require('koa-router')();
-const koaBody   = require('../index')({multipart:true});
+import Koa from 'koa';
+import KoaBody from '../index.js';
+const app = new Koa();
+const koaBody = KoaBody({ multipart: true });
 
 router.post('/users', koaBody,
   (ctx) => {
@@ -53,12 +52,12 @@ router.post('/', koaBody,
     */
     ctx.body = JSON.stringify(ctx.request.body, null, 2);
   }
-)
+);
 
 app.use(router.routes());
 
 const port = process.env.PORT || 3333;
 app.listen(port);
-console.log('Koa server with `koa-body` parser start listening to port %s', port);
+console.log('Koa server with `koa-body-esm` parser start listening to port %s', port);
 console.log('curl -i http://localhost:%s/users -d "user=admin"', port);
 console.log('curl -i http://localhost:%s/ -F "source=@/path/to/file.png"', port);

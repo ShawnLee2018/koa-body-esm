@@ -1,5 +1,5 @@
 /**
- * koa-body - index.js
+ * koa-body-esm - index.js
  * Copyright(c) 2014
  * MIT Licensed
  *
@@ -11,4 +11,4 @@
 
 'use strict';
 
-module.exports = Symbol.for('unparsedBody');
+export default Symbol.for('unparsedBody');
